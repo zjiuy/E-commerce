@@ -1,0 +1,12 @@
+
+django-simpleui==2025.5.262
+
+scikit-learn==1.6.1
+requests==2.32.3
+lxml==5.4.0
+pandas==2.2.3
+jieba==0.42.1
+
+wordcloud==1.9.4
+pillow==11.2.1
+PyMySQL==1.1.1

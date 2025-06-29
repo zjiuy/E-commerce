@@ -1,0 +1,368 @@
+{% extends 'base.html' %}
+
+{% block  title%}
+修改个人信息页面
+{% endblock %}
+
+{% block sidebar%}
+    <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'home' %}">
+          <i class="bi bi-grid"></i>
+          <span>首页</span>
+        </a>
+      </li>
+      <li class="nav-heading">个人信息</li>
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'changeSelfInfo' %}">
+          <i class="bi bi-menu-button-wide"></i><span>修改信息</span></i>
+        </a>
+      </li><!-- End Components Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'changePassword' %}">
+          <i class="bi bi-journal-text"></i><span>修改密码</span>
+        </a>
+      </li>
+      <li class="nav-heading">周热销榜单</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'tableData' %}">
+          <i class="bi bi-layout-text-window-reverse"></i><span>榜单分析</span>
+        </a>
+      </li>
+      <li class="nav-heading">数据可视化分析</li>
+
+      <li class="nav-item">
+        <a class="nav-link "  href="{% url 'cityChar' %}">
+          <i class="bi bi-bar-chart"></i><span>知识图谱可视化</span></i>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'rateChar' %}">
+          <i class="bi bi-gem"></i><span>商品分类分析</span>
+        </a>
+      </li><!-- End Icons Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'priceChar' %}">
+          <i class="bi bi-person"></i>
+          <span>价格销量分析</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'commentsChar' %}">
+          <i class="bi bi-question-circle"></i>
+          <span>产地品牌分析</span>
+        </a>
+      </li>
+      <li class="nav-heading">推荐功能</li>
+        <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'recommendation' %}">
+          <i class="bi bi-envelope"></i>
+          <span>商品推荐</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'recommendation' %}">
+          <i class="bi bi-envelope"></i>
+          <span>AI问答</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+      <li class="nav-heading">词云图</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'detailIntroCloud' %}">
+          <i class="bi bi-card-list"></i>
+          <span>种类包装词云图</span>
+        </a>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'commentContentCloud' %}">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>商品描述词云图</span>
+        </a>
+      </li>
+    </ul>
+
+  </aside>
+
+
+{% endblock %}
+
+{% block content %}
+<div class="pagetitle" style="display: flex; align-items: center;">
+    <div style="margin-right: auto;">
+        <h1>知识图谱可视化</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">数据可视化</a></li>
+                <li class="breadcrumb-item active">知识图谱可视化</li>
+            </ol>
+        </nav>
+    </div>
+  <div style="margin-left: 10px;">
+        <!-- 修改为下拉选择框 -->
+        <select id="categorySelect" class="form-control" style="width: 250px;">
+            <!-- 第一个分类 -->
+            <optgroup label="商品类别">
+                 <option value="茗茶">茗茶</option>
+                <option value="口腔护理">口腔护理</option>
+               
+                <option value="母婴纸品">母婴纸品</option>
+                <option value="男式卫衣">男式卫衣</option>
+                <option value="身体护理">身体护理</option>
+                <option value="头发护理">头发护理</option>
+                <option value="喂养洗护">喂养洗护</option>
+                <option value="香水">香水</option>
+                <option value="休闲零食">休闲零食</option>
+                <option value="学习机">学习机</option>
+                <option value="眼部护理">眼部护理</option>
+                <option value="眼妆">眼妆</option>
+                <option value="饮料冲调">饮料冲调</option>
+                <option value="营养辅食">营养辅食</option>
+                <option value="被芯">被芯</option>
+                <option value="底妆">底妆</option>
+                <option value="儿童早教机/儿童平板">儿童早教机/儿童平板</option>
+                <option value="护肤套装">护肤套装</option>
+                <option value="空气炸锅">空气炸锅</option>
+                <option value="口红">口红</option>
+            </optgroup>
+        </select>
+    </div>
+    <h5 style="font-weight: normal; margin-left: 10px;">
+        {{ nowTime.year }} - {{ nowTime.mon }} - {{ nowTime.day }}
+    </h5>
+</div>
+
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">详情简介词云图</h5>
+                    <div id="mains" style="width:100%;height: 650px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block echarts %}
+<style>
+.link {  fill: none;  stroke: #666;  stroke-width: 1.5px;}
+#licensing {  fill: green;}
+.link.licensing {  stroke: green;}
+.link.resolved {  stroke-dasharray: 0,2 1;}
+circle {  fill: #ccc;  stroke: #333;  stroke-width: 1.5px;}
+text {  font: 12px Microsoft YaHei;  pointer-events: none;  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;}
+.linetext {    font-size: 12px;}
+</style>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script>
+let links = [];
+let nodes = {};
+const API_URL = 'api/get_allRela';
+
+// 布局计算函数
+function transform1(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+}
+
+function transform2(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+}
+
+// 加载关系数据
+async function loadRelations() {
+    try {
+        const response = await fetch(API_URL);
+
+        if (!response.ok) {
+            throw new Error(`HTTP错误，状态码: ${response.status}`);
+        }
+
+        const relations = await response.json();
+        console.log('获取到的关系数据:', relations);
+
+        return relations;
+    } catch (error) {
+        console.error('获取关系数据时出错:', error);
+        throw error;
+    }
+}
+
+// 页面加载完成后初始化图表
+document.addEventListener('DOMContentLoaded', async function init() {
+    var container = document.getElementById('mains');
+    var containerRect = container.getBoundingClientRect();
+    var width = containerRect.width;
+    var height = containerRect.height;
+
+    // 加载关系数据
+    const relations = await loadRelations();
+    links = relations;
+    console.log('处理后的关系数据:', links)
+
+    // 处理节点数据
+    links.forEach(function(link) {
+        link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+        link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+        {#console.log('处理后的关系数据:', link.source,link.target)#}
+    });
+
+    // ========== 定义 tick 函数在这里 ========== //
+    function tick() {
+        circle.attr("transform", transform1);
+        text.attr("transform", transform2);
+
+        edges_line.attr('d', function(d) { 
+            return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
+        });  
+
+        edges_text.attr('transform', function(d, i){
+            if (d.target.x < d.source.x) {
+                var bbox = this.getBBox();
+                var rx = bbox.x + bbox.width / 2;
+                var ry = bbox.y + bbox.height / 2;
+                return 'rotate(180 ' + rx + ' ' + ry + ')';
+            } else {
+                return 'rotate(0)';
+            }
+        });
+    }
+    var force = d3.layout.force()
+        .nodes(d3.values(nodes))
+        .links(links)
+        .size([width, height])
+        .linkDistance(180)
+        .charge(-1500)
+        .on("tick", tick)
+        .start();
+
+    // ========== 继续创建 SVG 图表 ========== //
+    var svg = d3.select("#mains").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    // 创建箭头标记
+    var marker = svg.append("marker")
+        .attr("id", "resolved")
+        .attr("markerUnits","userSpaceOnUse")
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX",32)
+        .attr("refY", -1)
+        .attr("markerWidth", 12)
+        .attr("markerHeight", 12)
+        .attr("orient", "auto")
+        .attr("stroke-width",2)
+        .append("path")
+        .attr("d", "M0,-5L10,0L0,5")
+        .attr('fill','#000000');
+
+    // 创建连线
+    var edges_line = svg.selectAll(".edgepath")
+        .data(links)
+        .enter()
+        .append("path")
+        .attr({
+            'd': function(d) { return 'M '+d.source.x+' '+d.source.y+' L '+ d.target.x +' '+d.target.y; },
+            'class':'edgepath',
+            'id':function(d,i) { return 'edgepath'+i; }
+        })
+        .style("stroke","#B43232")
+        .style("pointer-events", "none")
+        .style("stroke-width",0.5)
+        .attr("marker-end", "url(#resolved)");
+
+    // 创建连线上的文本
+    var edges_text = svg.append("g").selectAll(".edgelabel")
+        .data(links)
+        .enter()
+        .append("text")
+        .style("pointer-events", "none")
+        .attr({  
+            'class':'edgelabel',
+            'id':function(d,i){ return 'edgepath'+i; },
+            'dx':80,
+            'dy':0
+        });
+
+    edges_text.append('textPath')
+        .attr('xlink:href',function(d,i) { return '#edgepath'+i; })
+        .style("pointer-events", "none")
+        .text(function(d){ return d.rela; });
+
+  
+
+    // 创建节点
+    var circle = svg.append("g").selectAll("circle")
+        .data(force.nodes())
+        .enter().append("circle")
+        .style("fill","#F9EBF9")
+        .style('stroke',"#A254A2")
+        .attr("r", 28)
+        .on("click", function(node) {
+            edges_line.style("stroke-width", function(line) {
+                if (line.source.name == node.name || line.target.name == node.name) {
+                    return 4;
+                } else {
+                    return 0.5;
+                }
+            });
+        })
+        .call(force.drag);
+
+    // 创建节点文本
+     var text = svg.append("g").selectAll("text")
+        .data(force.nodes())
+        .enter()
+        .append("text")
+        .attr("dy", ".35em")  
+        .attr("text-anchor", "middle")
+        .style('fill',function(node){
+            var color;
+            var link=links[node.index];
+    		color="#A254A2";
+            return color;
+        }).attr('x',function(d){
+            var re_en = /[a-zA-Z]+/g;
+            if(d.name.match(re_en)){
+                 d3.select(this).append('tspan')
+                 .attr('x',0)
+                 .attr('y',2)
+                 .text(function(){return d.name;});
+            }
+            
+            else if(d.name.length<=4){
+                 d3.select(this).append('tspan')
+                .attr('x',0)
+                .attr('y',2)
+                .text(function(){return d.name;});
+            }else{
+                var top=d.name.substring(0,4);
+                var bot=d.name.substring(4,d.name.length);
+
+                d3.select(this).text(function(){return '';});
+
+                d3.select(this).append('tspan')
+                    .attr('x',0)
+                    .attr('y',-7)
+                    .text(function(){return top;});
+
+                d3.select(this).append('tspan')
+                    .attr('x',0)
+                    .attr('y',10)
+                    .text(function(){return bot;});
+            }
+        });
+});
+</script>
+
+
+{% endblock %}

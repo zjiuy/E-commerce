@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+
+{% block  title%}
+评分情况分析
+{% endblock %}
+
+{% block sidebar%}
+     <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'home' %}">
+          <i class="bi bi-grid"></i>
+          <span>首页</span>
+        </a>
+      </li>
+      <li class="nav-heading">个人信息</li>
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'changeSelfInfo' %}">
+          <i class="bi bi-menu-button-wide"></i><span>修改信息</span></i>
+        </a>
+      </li><!-- End Components Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'changePassword' %}">
+          <i class="bi bi-journal-text"></i><span>修改密码</span>
+        </a>
+      </li>
+      <li class="nav-heading">周热销榜单</li>
+
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'tableData' %}">
+          <i class="bi bi-layout-text-window-reverse"></i><span>榜单分析</span>
+        </a>
+      </li>
+      <li class="nav-heading">数据可视化分析</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'cityChar' %}">
+          <i class="bi bi-bar-chart"></i><span>知识图谱可视化</span></i>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'rateChar' %}">
+          <i class="bi bi-gem"></i><span>商品分类分析</span>
+        </a>
+      </li><!-- End Icons Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'priceChar' %}">
+          <i class="bi bi-person"></i>
+          <span>价格销量分析</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'commentsChar' %}">
+          <i class="bi bi-question-circle"></i>
+          <span>产地品牌分析</span>
+        </a>
+      </li>
+      <li class="nav-heading">推荐功能</li>
+        <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'recommendation' %}">
+          <i class="bi bi-envelope"></i>
+          <span>商品推荐</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'recommendation' %}">
+          <i class="bi bi-envelope"></i>
+          <span>AI问答</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+      <li class="nav-heading">词云图</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'detailIntroCloud' %}">
+          <i class="bi bi-card-list"></i>
+          <span>种类包装词云图</span>
+        </a>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'commentContentCloud' %}">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>商品描述词云图</span>
+        </a>
+      </li>
+    </ul>
+
+  </aside>
+
+{% endblock %}
+
+
+{% block content %}
+<div class="pagetitle">
+    <h1>商品分类分析</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">数据可视化</a></li>
+            <li class="breadcrumb-item active">商品分类分析页面</li>
+        </ol>
+    </nav>
+    <h5 style="font-weight: normal">{{ nowTime.year }}-{{ nowTime.mon }}-{{ nowTime.day }}</h5>
+</div>
+
+<section class="section dashboard">
+    <div class="row">
+        <!-- 筛选条件和扇形图展示区域 -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">使用场景下榜单类型占比</h5>
+                    <div style="display: flex; flex-direction: column;">
+                        <!-- 筛选表单 -->
+                        <form method="GET" action="{% url 'rateChar' %}" style="margin-bottom: 20px;">
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">使用场景</label>
+                                <div class="col-sm-4">
+                                    <select class="form-select" name="usage_scenario">
+                                        <option value="">全部</option>
+                                        {% for usage_scenario in usage_scenarios %}
+                                            <option value="{{ usage_scenario }}" {% if selected_usage_scenario == usage_scenario %}selected{% endif %}>
+                                                {{ usage_scenario }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <button class="btn btn-primary">查询</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- 图表展示区域 -->
+                        <div id="chart" style="width: 100%; height: 400px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 饼图展示区域 -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">产品种类关系占比</h5>
+                    <div style="display: flex; flex-direction: column;">
+                        <!-- 筛选表单 -->
+                        <form method="GET" action="{% url 'rateChar' %}" style="margin-bottom: 20px;">
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">榜单类型</label>
+                                <div class="col-sm-4">
+                                    <select class="form-select" name="ranking_type">
+                                        <option value="">全部</option>
+                                        {% for ranking_type in ranking_types %}
+                                            <option value="{{ ranking_type }}" {% if selected_ranking_type == ranking_type %}selected{% endif %}>
+                                                {{ ranking_type }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <button class="btn btn-primary">查询</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- 饼图展示区域 -->
+                        <div id="pieChart" style="width: 100%; height: 400px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block echarts %}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script>
+    // 可变化图表（Treemap 和 Sunburst）
+    var chartDom = document.getElementById('chart');
+    var myChart = echarts.init(chartDom);
+    var option;
+
+    // 准备图表数据
+    var chartData = {{ chartData | safe }};
+    var sunburstData = {{ sunburstData | safe }};
+
+    const treemapOption = {
+        tooltip: {
+            trigger: 'item'
+        },
+        series: [
+            {
+                type: 'treemap',
+                id: 'echarts-package-size',
+                animationDurationUpdate: 1000,
+                roam: false,
+                nodeClick: undefined,
+                data: chartData,
+                universalTransition: true,
+                label: {
+                    show: true
+                },
+                breadcrumb: {
+                    show: false
+                }
+            }
+        ]
+    };
+
+    const sunburstOption = {
+        tooltip: {
+            trigger: 'item'
+        },
+        series: [
+            {
+                type: 'sunburst',
+                id: 'echarts-package-size',
+                radius: ['20%', '90%'],
+                animationDurationUpdate: 1000,
+                nodeClick: undefined,
+                data: sunburstData,
+                universalTransition: true,
+                itemStyle: {
+                    borderWidth: 1,
+                    borderColor: 'rgba(255,255,255,.5)'
+                },
+                label: {
+                    show: false
+                }
+            }
+        ]
+    };
+
+    // 初始设置为 treemapOption
+    let currentOption = treemapOption;
+    myChart.setOption(currentOption);
+
+    // 每3秒切换图表类型
+    setInterval(function () {
+        currentOption =
+            currentOption === treemapOption ? sunburstOption : treemapOption;
+        myChart.setOption(currentOption);
+    }, 3000);
+
+    // 饼图
+    var pieChartDom = document.getElementById('pieChart');
+    var pieChart = echarts.init(pieChartDom);
+    var pieOption;
+
+    // 准备饼图数据
+    var pieData = {{ pieChartData | safe }};
+
+    pieOption = {
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        legend: {
+            orient: 'vertical',
+            left: 10,
+            data: pieData.map(function(item) {
+                return item.name;
+            })
+        },
+        series: [
+            {
+                name: '产品种类关系占比',
+                type: 'pie',
+                radius: ['50%', '70%'],
+                avoidLabelOverlap: false,
+                itemStyle: {
+                    borderRadius: 10,
+                    borderColor: '#fff',
+                    borderWidth: 2
+                },
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: '18',
+                        fontWeight: 'bold'
+                    }
+                },
+                labelLine: {
+                    show: false
+                },
+                data: pieData
+            }
+        ]
+    };
+
+    pieChart.setOption(pieOption);
+
+    // 窗口大小变化时，重绘图表
+    window.addEventListener('resize', function() {
+        myChart.resize();
+        pieChart.resize();
+    });
+</script>
+{% endblock %}

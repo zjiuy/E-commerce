@@ -1,0 +1,439 @@
+{% extends 'base.html' %}
+
+{% block  title%}
+数据操作页面
+{% endblock %}
+
+{% block sidebar%}
+     <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'home' %}">
+          <i class="bi bi-grid"></i>
+          <span>首页</span>
+        </a>
+      </li>
+      <li class="nav-heading">个人信息</li>
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'changeSelfInfo' %}">
+          <i class="bi bi-menu-button-wide"></i><span>修改信息</span></i>
+        </a>
+      </li><!-- End Components Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'changePassword' %}">
+          <i class="bi bi-journal-text"></i><span>修改密码</span>
+        </a>
+      </li>
+      <li class="nav-heading">周热销榜单</li>
+
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'tableData' %}">
+          <i class="bi bi-layout-text-window-reverse"></i><span>榜单分析</span>
+        </a>
+      </li>
+      <li class="nav-heading">数据可视化分析</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'cityChar' %}">
+          <i class="bi bi-bar-chart"></i><span>知识图谱可视化</span></i>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'rateChar' %}">
+          <i class="bi bi-gem"></i><span>商品分类分析</span>
+        </a>
+      </li><!-- End Icons Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'priceChar' %}">
+          <i class="bi bi-person"></i>
+          <span>价格销量分析</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'commentsChar' %}">
+          <i class="bi bi-question-circle"></i>
+          <span>产地品牌分析</span>
+        </a>
+      </li>
+      <li class="nav-heading">推荐功能</li>
+        <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'recommendation' %}">
+          <i class="bi bi-envelope"></i>
+          <span>商品推荐</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'recommendation' %}">
+          <i class="bi bi-envelope"></i>
+          <span>AI问答</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+      <li class="nav-heading">词云图</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'detailIntroCloud' %}">
+          <i class="bi bi-card-list"></i>
+          <span>种类包装词云图</span>
+        </a>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'commentContentCloud' %}">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>商品描述词云图</span>
+        </a>
+      </li>
+    </ul>
+
+  </aside>
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="pagetitle" style="display: flex;align-items: center">
+        <div style="margin-right: auto">
+            <h1>商品数据筛选</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">数据表格</a></li>
+                    <li class="breadcrumb-item active">数据操作页面</li>
+                </ol>
+            </nav>
+        </div>
+        <h5 style="font-weight: normal">
+            {{ nowTime.year }} - {{ nowTime.mon }} - {{ nowTime.day }}
+        </h5>
+    </div>
+
+    <!-- 在面包屑导航下方添加筛选表单 -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">榜单筛选</h5>
+                    <form action="{% url 'tableData' %}" method="GET">
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">商品属性:</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <select class="form-select" name="product_attributes">
+                                        <option value="">全部</option>
+                                        {% for attr in product_attributes %}
+                                        <option value="{{ attr }}" {% if attr == selected_product_attributes %}selected{% endif %}>{{ attr }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">使用场景:</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <select class="form-select" name="usage_scenarios">
+                                        <option value="">全部</option>
+                                        {% for scenario in usage_scenarios %}
+                                        <option value="{{ scenario }}" {% if scenario == selected_usage_scenarios %}selected{% endif %}>{{ scenario }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">榜单类型:</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <select class="form-select" name="ranking_types">
+                                        <option value="">全部</option>
+                                        {% for type in ranking_types %}
+                                        <option value="{{ type }}" {% if type == selected_ranking_types %}selected{% endif %}>{{ type }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">排序方式:</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <select class="form-select" name="sort_by">
+                                        <option value="weekly_sales_quantity" {% if sort_by == 'weekly_sales_quantity' %}selected{% endif %}>周销售数量</option>
+                                        <option value="weekly_sales_amount" {% if sort_by == 'weekly_sales_amount' %}selected{% endif %}>周销售额</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-10 offset-sm-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-funnel"></i> 查询
+                                </button>
+                                <a href="{% url 'tableData' %}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-clockwise"></i> 重置
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 数据表格展示 -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">商品数据表格</h5>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>榜单类型</th>
+                                <th>商品名</th>
+                                <th>券后价</th>
+                                <th>品牌</th>
+                                <th>产品名称</th>
+                                <th>种类</th>
+                                <th>产地</th>
+                                <th>规格</th>
+                                <th>周销售数量</th>
+                                <th>周销售额</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in tableData %}
+                            <tr>
+                                <td>{{ start_index|add:forloop.counter0 }}</td>
+                                <td>{{ item.榜单类型 }}</td>
+                                <td>{{ item.商品名 }}</td>
+                                <td>{{ item.券后价 }}</td>
+                                <td>{{ item.品牌 }}</td>
+                                <td>{{ item.产品名称 }}</td>
+                                <td>{{ item.种类 }}</td>
+                                <td>{{ item.产地 }}</td>
+                                <td>{{ item.规格 }}</td>
+                                <td>{{ item.周销售数量 }}</td>
+                                <td>{{ item.周销售额 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <!-- 分页 -->
+                    <div class="row">
+                        <div class="col-12">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+                                    {% if tableData.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ tableData.previous_page_number }}&sort_by={{ sort_by }}&product_attributes={{ selected_product_attributes }}&usage_scenarios={{ selected_usage_scenarios }}&ranking_types={{ selected_ranking_types }}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                    {% for num in paginator.page_range %}
+                                        <li class="page-item {% if num == tableData.number %}active{% endif %}">
+                                            <a class="page-link" href="?page={{ num }}&sort_by={{ sort_by }}&product_attributes={{ selected_product_attributes }}&usage_scenarios={{ selected_usage_scenarios }}&ranking_types={{ selected_ranking_types }}">{{ num }}</a>
+                                        </li>
+                                    {% endfor %}
+
+                                    {% if tableData.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ tableData.next_page_number }}&sort_by={{ sort_by }}&product_attributes={{ selected_product_attributes }}&usage_scenarios={{ selected_usage_scenarios }}&ranking_types={{ selected_ranking_types }}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                            <!-- 显示当前页码 -->
+                            <div class="text-center mt-3">
+                                <p>第 {{ tableData.number }} 页，共 {{ paginator.num_pages }} 页</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ <!-- 销售分析模块 -->
+   <!-- 销售分析模块 -->
+<div class="row mt-4">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">销售分析</h5>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div id="salesChart" style="width: 100%; height: 400px;"></div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="analysis-summary">
+                            <h6>销售表现最佳商品</h6>
+                            <p id="best-performing"></p>
+                            <h6>销售表现最差商品</h6>
+                            <p id="worst-performing"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ECharts -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 初始化ECharts图表
+        var chartDom = document.getElementById('salesChart');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        // 模拟数据 - 实际应用中从后端获取
+        var filteredData = [
+            {% for item in tableData %}
+                {
+                    商品名: "{{ item.商品名 }}",
+                    周销售数量: {{ item.周销售数量 }},
+                    周销售额: {{ item.周销售额 }}
+                },
+            {% endfor %}
+        ];
+
+        // 提取商品名、周销售数量和周销售额
+        var productNames = filteredData.map(item => item.商品名);
+        var weeklySalesQuantity = filteredData.map(item => item.周销售数量);
+        var weeklySalesAmount = filteredData.map(item => item.周销售额);
+
+        // 找出销售表现最佳和最差的商品
+        function findBestAndWorstPerforming() {
+            var sortedByQuantity = [...filteredData].sort((a, b) => b.周销售数量 - a.周销售数量);
+            var sortedByAmount = [...filteredData].sort((a, b) => b.周销售额 - a.周销售额);
+            var bestQuantity = sortedByQuantity[0];
+            var worstQuantity = sortedByQuantity[sortedByQuantity.length - 1];
+            var bestAmount = sortedByAmount[0];
+            var worstAmount = sortedByAmount[sortedByAmount.length - 1];
+
+            // 更新分析结果
+            document.getElementById('best-performing').innerHTML = `
+                <strong>按销售数量:</strong> ${bestQuantity.商品名} (销售数量: ${bestQuantity.周销售数量})<br>
+                <strong>按销售额:</strong> ${bestAmount.商品名} (销售额: ${bestAmount.周销售额})
+            `;
+            document.getElementById('worst-performing').innerHTML = `
+                <strong>按销售数量:</strong> ${worstQuantity.商品名} (销售数量: ${worstQuantity.周销售数量})<br>
+                <strong>按销售额:</strong> ${worstAmount.商品名} (销售额: ${worstAmount.周销售额})
+            `;
+        }
+
+        // 配置图表选项 - 修改为横向条形图
+        option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow' // 更改指示器类型为阴影
+                }
+            },
+            legend: {
+                data: ['周销售数量', '周销售额']
+            },
+            grid: {
+                left: '3%',
+                right: '12%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'value',
+                    name: '周销售数量',
+                    nameLocation: 'middle',
+                    nameGap: 40,
+                    position: 'bottom',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '周销售额',
+                    nameLocation: 'middle',
+                    nameGap: 40,
+                    position: 'top',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            yAxis: {
+                type: 'category',
+                data: productNames,
+                name: '商品名称',
+                nameLocation: 'start',
+                nameGap: 40,
+                axisLabel: {
+                    interval: 0,
+                    formatter: function (value) {
+                        return value;
+                    }
+                }
+            },
+            series: [
+                {
+                    name: '周销售数量',
+                    type: 'bar',
+                    xAxisIndex: 0,
+                    data: weeklySalesQuantity,
+                    itemStyle: {
+                        color: '#5470c6'
+                    }
+                },
+                {
+                    name: '周销售额',
+                    type: 'bar',
+                    xAxisIndex: 1,
+                    data: weeklySalesAmount,
+                    itemStyle: {
+                        color: '#91cc75'
+                    }
+                }
+            ]
+        };
+
+        // 渲染图表
+        myChart.setOption(option);
+
+        // 调用函数更新分析结果
+        findBestAndWorstPerforming();
+
+        // 窗口大小改变时，重置图表大小
+        window.addEventListener('resize', function () {
+            myChart.resize();
+        });
+    });
+</script>
+{% endblock %}

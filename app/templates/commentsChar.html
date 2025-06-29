@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+
+{% block  title%}
+评论分析图
+{% endblock %}
+
+{% block sidebar%}
+    <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'home' %}">
+          <i class="bi bi-grid"></i>
+          <span>首页</span>
+        </a>
+      </li>
+      <li class="nav-heading">个人信息</li>
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'changeSelfInfo' %}">
+          <i class="bi bi-menu-button-wide"></i><span>修改信息</span></i>
+        </a>
+      </li><!-- End Components Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'changePassword' %}">
+          <i class="bi bi-journal-text"></i><span>修改密码</span>
+        </a>
+      </li>
+      <li class="nav-heading">周热销榜单</li>
+
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'tableData' %}">
+          <i class="bi bi-layout-text-window-reverse"></i><span>榜单分析</span>
+        </a>
+      </li>
+      <li class="nav-heading">数据可视化分析</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'cityChar' %}">
+          <i class="bi bi-bar-chart"></i><span>知识图谱可视化</span></i>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'rateChar' %}">
+          <i class="bi bi-gem"></i><span>商品分类分析</span>
+        </a>
+      </li><!-- End Icons Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'priceChar' %}">
+          <i class="bi bi-person"></i>
+          <span>价格销量分析</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'commentsChar' %}">
+          <i class="bi bi-question-circle"></i>
+          <span>产地品牌分析</span>
+        </a>
+      </li>
+      <li class="nav-heading">推荐功能</li>
+        <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'recommendation' %}">
+          <i class="bi bi-envelope"></i>
+          <span>商品推荐</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'recommendation' %}">
+          <i class="bi bi-envelope"></i>
+          <span>AI问答</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+      <li class="nav-heading">词云图</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'detailIntroCloud' %}">
+          <i class="bi bi-card-list"></i>
+          <span>种类包装词云图</span>
+        </a>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'commentContentCloud' %}">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>商品描述词云图</span>
+        </a>
+      </li>
+    </ul>
+
+  </aside>
+
+{% endblock %}
+
+
+{% block content %}
+    <div class="pagetitle">
+        <h1>品牌销售额分析</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">数据可视化</a></li>
+                <li class="breadcrumb-item active">品牌销售额分析</li>
+            </ol>
+        </nav>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">品牌销售额分析</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="filter-section">
+                                    <label for="category">选择榜单类型：</label>
+                                    <select id="category" name="category" onchange="updateChart()">
+                                        <option value="">全部类型</option>
+                                        {% for category in category_list %}
+                                        <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="salesChart" style="width: 100%; height: 500px;"></div>
+                        
+                        <div id="brandDetails" style="margin-top: 20px; display: none;">
+                            <h5>品牌销售详情</h5>
+                            <div id="brandInfo"></div>
+                        </div>
+                        
+                        <div id="brandAnalysis" style="margin-top: 20px;">
+                            <h5>品牌分析</h5>
+                            <div id="analysisInfo"></div>
+                        </div>
+                        
+                        <div id="topBrands" style="margin-top: 20px;">
+                            <h5>市场表现最好的前十名品牌</h5>
+                            <div id="topBrandsList">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <tr style="background-color: #f2f2f2;">
+                                        <th style="padding: 8px; text-align: left;">排名</th>
+                                        <th style="padding: 8px; text-align: left;">品牌</th>
+                                        <th style="padding: 8px; text-align: left;">销售额</th>
+                                    </tr>
+                                    {% for brand in echartsData.topBrands %}
+                                    <tr>
+                                        <td style="padding: 8px; border: 1px solid #ddd;">{{ forloop.counter }}</td>
+                                        <td style="padding: 8px; border: 1px solid #ddd;">{{ brand.name }}</td>
+                                        <td style="padding: 8px; border: 1px solid #ddd;">{{ brand.sales }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block echarts %}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script>
+    // 初始化图表
+    var salesChartDom = document.getElementById('salesChart');
+    var salesChart = echarts.init(salesChartDom);
+    
+    // 准备数据
+    var brandData = {{ echartsData.xData | safe }};
+    var salesData = {{ echartsData.ySalesData | safe }};
+    var marketPriceData = {{ echartsData.marketPriceData | safe }};
+    var couponPriceData = {{ echartsData.couponPriceData | safe }};
+    
+    // 定义图表选项
+    var option = {
+        title: {
+            text: '品牌销售额分析',
+            left: 'center',
+            textStyle: {
+                fontSize: 18,
+                fontWeight: 'bold'
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            },
+            formatter: function(params) {
+                var brandIndex = brandData.indexOf(params[0].name);
+                var marketPrice = marketPriceData[brandIndex];
+                var couponPrice = couponPriceData[brandIndex];
+                return params[0].name + '<br/>' 
+                    + params[0].seriesName + ' : ' + params[0].value + '<br/>' 
+                    + '市场价 : ' + marketPrice + '<br/>' 
+                    + '券后价 : ' + couponPrice;
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '15%',
+            top: '15%',
+            containLabel: true
+        },
+        dataZoom: [
+            {
+                type: 'inside',
+                start: 0,
+                end: 50
+            },
+            {
+                type: 'slider',
+                show: true,
+                start: 0,
+                end: 50,
+                height: 20,
+                bottom: 10
+            }
+        ],
+        xAxis: {
+            type: 'category',
+            data: brandData,
+            axisLabel: {
+                interval: 0,
+                rotate: 30,
+                fontSize: 12
+            },
+            axisLine: {
+                lineStyle: {
+                    color: '#333'
+                }
+            }
+        },
+        yAxis: {
+            type: 'value',
+            name: '销售额',
+            nameTextStyle: {
+                padding: [0, 0, 0, 50]
+            },
+            axisLabel: {
+                formatter: '{value}'
+            },
+            axisLine: {
+                show: true,
+                lineStyle: {
+                    color: '#333'
+                }
+            },
+            splitLine: {
+                lineStyle: {
+                    color: '#eee'
+                }
+            }
+        },
+        series: [{
+            name: '销售额',
+            type: 'bar',
+            barWidth: '40%',
+            data: salesData,
+            itemStyle: {
+                color: function(params) {
+                    var colorList = [
+                        '#5470C6', '#91CC75', '#FAC858', '#EE6666', '#73C0DE',
+                        '#3BA272', '#FC8452', '#9A60B4', '#ea7ccc', '#5470C6'
+                    ];
+                    return colorList[params.dataIndex % colorList.length];
+                }
+            },
+            label: {
+                show: true,
+                position: 'top',
+                formatter: '{c}'
+            }
+        }]
+    };
+    
+    // 应用选项
+    salesChart.setOption(option);
+    
+    // 重绘图表
+    window.addEventListener('resize', function() {
+        salesChart.resize();
+    });
+    
+    // 更新图表函数
+    function updateChart() {
+        var category = document.getElementById('category').value;
+        window.location.href = "{% url 'commentsChar' %}?category=" + category;
+    }
+</script>
+{% endblock %}
+    

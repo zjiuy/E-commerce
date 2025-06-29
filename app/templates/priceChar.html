@@ -1,0 +1,440 @@
+{% extends 'base.html' %}
+
+{% block  title%}
+价格和周销量分析
+{% endblock %}
+
+{% block sidebar%}
+     <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'home' %}">
+          <i class="bi bi-grid"></i>
+          <span>首页</span>
+        </a>
+      </li>
+      <li class="nav-heading">个人信息</li>
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'changeSelfInfo' %}">
+          <i class="bi bi-menu-button-wide"></i><span>修改信息</span></i>
+        </a>
+      </li><!-- End Components Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'changePassword' %}">
+          <i class="bi bi-journal-text"></i><span>修改密码</span>
+        </a>
+      </li>
+      <li class="nav-heading">周热销榜单</li>
+
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'tableData' %}">
+          <i class="bi bi-layout-text-window-reverse"></i><span>榜单分析</span>
+        </a>
+      </li>
+      <li class="nav-heading">数据可视化分析</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed"  href="{% url 'cityChar' %}">
+          <i class="bi bi-bar-chart"></i><span>知识图谱可视化</span></i>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'rateChar' %}">
+          <i class="bi bi-gem"></i><span>商品分类分析</span>
+        </a>
+      </li><!-- End Icons Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'priceChar' %}">
+          <i class="bi bi-person"></i>
+          <span>价格销量分析</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'commentsChar' %}">
+          <i class="bi bi-question-circle"></i>
+          <span>产地品牌分析</span>
+        </a>
+      </li>
+      <li class="nav-heading">推荐功能</li>
+        <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'recommendation' %}">
+          <i class="bi bi-envelope"></i>
+          <span>商品推荐</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'recommendation' %}">
+          <i class="bi bi-envelope"></i>
+          <span>AI问答</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+      <li class="nav-heading">词云图</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'detailIntroCloud' %}">
+          <i class="bi bi-card-list"></i>
+          <span>种类包装词云图</span>
+        </a>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'commentContentCloud' %}">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>商品描述词云图</span>
+        </a>
+      </li>
+    </ul>
+
+  </aside>
+{% endblock %}
+
+
+{% block content %}
+      <div class="pagetitle" style="display: flex;align-items: center">
+      <div style="margin-right: auto">
+          <h1>价格和月销量分析</h1>
+        <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">数据可视化</a></li>
+          <li class="breadcrumb-item active">价格和月销量分析</li>
+        </ol>
+      </nav>
+      </div>
+        <h5 style="font-weight: normal">
+            {{ nowTime.year }} - {{ nowTime.mon }} - {{ nowTime.day }}
+        </h5>
+    </div>
+
+
+      
+      
+        <section class="section dashboard">
+    <!-- 筛选表单 -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">榜单筛选</h5>
+                    <form action="{% url 'priceChar' %}" method="GET">
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">选择榜单类型</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <select class="form-select" name="category">
+                                         <option value="" {% if not selected_category %}selected{% endif %}>全部榜单</option>
+                                            <option value="茗茶">茗茶</option>
+                                            <option value="身体护理">身体护理</option>
+                                            <option value="母婴纸品">母婴纸品</option>
+                                            <option value="休闲零食">休闲零食</option>
+                                            <option value="香水">香水</option>
+                                            <option value="饮料冲调">饮料冲调</option>
+                                            <option value="被芯">被芯</option>
+                                            <option value="眼部护理">眼部护理</option>
+                                            <option value="喂养洗护">喂养洗护</option>
+                                            <option value="营养辅食">营养辅食</option>
+                                            <option value="儿童早教机/儿童平板">儿童早教机/儿童平板</option>
+                                            <option value="学习机">学习机</option>
+                                            <option value="底妆">底妆</option>
+                                            <option value="护肤套装">护肤套装</option>
+                                            <option value="眼妆">眼妆</option>
+                                            <option value="头发护理">头发护理</option>
+                                            <option value="口红">口红</option>
+                                            <option value="口腔护理">口腔护理</option>
+                                            <option value="空气炸锅">空气炸锅</option>
+                                            <option value="男式卫衣">男式卫衣</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-funnel"></i> 生成
+                                    </button>
+                                    <a href="{% url 'priceChar' %}" class="btn btn-secondary">
+                                        <i class="bi bi-arrow-clockwise"></i> 重置
+                                    </a>
+                                </div>
+                                <small class="form-text text-muted">选择要分析的榜单类型，默认显示全部数据</small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图表展示部分 -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">商品价格分布</h5>
+                    <div id="mains" style="width:100%;height: 450px"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">商品销量分析</h5>
+                    <div id="mainsTwo" style="width:100%;height: 450px"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">折扣占比分析</h5>
+                    <div id="mainsThree" style="width:100%;height: 450px"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">实际价与周销售额关系</h5>
+                    <div id="mainsFour" style="width:100%;height: 450px"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block echarts %}
+    <!-- 商品价格分析图 -->
+    <script>
+        var chartDom = document.getElementById('mains');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        option = {
+          title: {
+            text: '商品价格分布分析'
+          },
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross'
+            }
+          },
+          legend: {},
+          toolbox: {
+            show: true,
+            feature: {
+              saveAsImage: {}
+            }
+          },
+          dataZoom: [
+            {
+              show: true,
+              start: 0,
+              end: 100
+            },
+            {
+              type: 'inside',
+              start: 0,
+              end: 100
+            }
+          ],
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: {{ echartsData.xData | safe }}
+          },
+          yAxis: {
+            type: 'value',
+            axisLabel: {
+              formatter: '{value} 个'
+            },
+            axisPointer: {
+              snap: true
+            }
+          },
+          series: [
+            {
+              name: '价格区间个数',
+              type: 'line',
+              smooth: true,
+              data: {{ echartsData.yData | safe }},
+            }
+          ]
+        };
+
+        option && myChart.setOption(option);
+    </script>
+
+    <!-- 商品销量分析图 -->
+    <script>
+        var chartDom = document.getElementById('mainsTwo');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        option = {
+            title: {    
+                text: '商品销量分析'
+            },
+            xAxis: {
+                type: 'category',
+                data: {{ echartsData.x1Data | safe }}
+            },
+            yAxis: {
+                type: 'value',
+                name: '销量个数'
+            },
+            dataZoom: [
+        {
+          show: true,
+          start: 0,
+          end: 100
+        },
+        {
+          type: 'inside',
+          start: 0,
+          end: 100
+        }
+      ],
+            series: [{
+                name: '销量个数',
+                type: 'bar',
+                data: {{ echartsData.y1Data | safe }},
+                itemStyle: {
+                    color: '#2f4554'
+                },
+                label: {
+                    show: true,
+                    position: 'top'
+                }
+            }],
+            animationEasing: 'elasticOut'
+        };
+
+        option && myChart.setOption(option);
+    </script>
+
+    <!-- 折扣占比分析图 -->
+    <script>
+        var chartDom = document.getElementById('mainsThree');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        option = {
+            
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left',
+            type: 'scroll'
+          },
+          toolbox: {
+            show: true,
+            feature: {
+              saveAsImage: {},
+              restore: {},
+              dataView: {}
+            }
+          },
+          series: [
+            {
+              name: '折扣占比个数',
+              type: 'pie',
+              radius: '50%',
+              data: {{ echartsData.disCountPieData | safe }},
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        };
+
+        option && myChart.setOption(option);
+    </script>
+    <!-- 券后价与周销售额关系图 -->
+    <!-- 券后价与周销售额关系图 -->
+<script>
+    var chartDom = document.getElementById('mainsFour');
+    var myChart = echarts.init(chartDom);
+    var option;
+
+    option = {
+        title: {
+            text: '券后价与周销售额关系'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+                return `${params.name}<br/>券后价: ${params.value[0]}元<br/>周销售额: ${params.value[1]}元`;
+            }
+        },
+        xAxis: {
+            type: 'value',
+            name: '券后价（元）',
+            axisLabel: {
+                formatter: '{value} 元'
+            }
+        },
+        yAxis: {
+            type: 'value',
+            name: '周销售额（元）',
+            axisLabel: {
+                formatter: '{value} 元'
+            }
+        },
+        series: [{
+            name: '销售额',
+            type: 'scatter',
+            data: {{ echartsData.couponPriceSalesData | safe }},
+            symbolSize: 10, // 设置固定散点大小
+            itemStyle: {
+                color: function(params) {
+                    // 根据销售额设置颜色
+                    var sales = params.value[1];
+                    if (sales > 50000) return '#d94e5d'; // 高销售额为红色
+                    if (sales > 20000) return '#f1a762'; // 中等销售额为橙色
+                    return '#5470c6'; // 低销售额为蓝色
+                }
+            },
+            label: {
+                show: false,
+                formatter: '{b}'
+            }
+        }],
+        visualMap: {
+            show: true,
+            type: 'continuous',
+            seriesIndex: 0,
+            min: 0,
+            max: 100000,
+            inRange: {
+                color: ['#5470c6', '#d94e5d'] // 低销售额为蓝色，高销售额为红色
+            },
+            text: ['高', '低'],
+            calculable: true
+        }
+    };
+
+    option && myChart.setOption(option);
+</script>
+    <script>
+    // 页面加载完成后执行
+    document.addEventListener('DOMContentLoaded', function() {
+        // 获取下拉菜单元素
+        var categorySelect = document.querySelector('select[name="category"]');
+        
+        // 检查 URL 中是否有 category 参数
+        var urlParams = new URLSearchParams(window.location.search);
+        var selectedCategory = urlParams.get('category');
+        
+        // 如果 URL 中有 category 参数，设置下拉菜单的选中值
+        if (selectedCategory) {
+            categorySelect.value = selectedCategory;
+        }
+    });
+</script>
+{% endblock %}
